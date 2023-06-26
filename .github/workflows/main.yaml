@@ -22,7 +22,7 @@ jobs:
         with:
           imageToDeploy: wimacr.azurecr.io/app:${{ github.sha }}
           acrName: wimacr
-          containerAppName: fastapica
+          containerAppName: fastapicontainerapp
           resourceGroup: Wim-Apps
           targetPort: 8000
           location: westeurope
