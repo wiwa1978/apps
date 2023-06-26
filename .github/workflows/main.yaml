@@ -24,5 +24,9 @@ jobs:
           acrName: wimacr
           containerAppName: fastapica
           resourceGroup: Wim-Apps
+          targetPort: 8000
+          location: westeurope
+          acrUsername: ${{ secrets.REGISTRY_USERNAME }}
+          acrPassword: ${{ secrets.REGISTRY_PASSWORD }}
 
-#test
+#test1
