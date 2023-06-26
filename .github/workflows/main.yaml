@@ -20,13 +20,12 @@ jobs:
       - name: Build and deploy Container App
         uses: azure/container-apps-deploy-action@v1
         with:
-          appSourcePath: ${{ github.workspace }}
+          imageToDeploy: myregistry.azurecr.io/app:${{ github.sha }}
           acrName: wimacr
           containerAppName: fastapica
           resourceGroup: Wim-Apps
           targetPort: 8000
           location: westeurope
-          acrUsername: ${{ secrets.REGISTRY_USERNAME }}
-          acrPassword: ${{ secrets.REGISTRY_PASSWORD }}
+
 
 #test1
