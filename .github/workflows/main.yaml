@@ -20,7 +20,7 @@ jobs:
       - name: Build and deploy Container App
         uses: azure/container-apps-deploy-action@v1
         with:
-          imageToDeploy: wimacr.azurecr.io/app:${{ github.sha }}
+          imageToDeploy: wimacr.azurecr.io/fastapi_todo:1.1
           acrName: wimacr
           containerAppName: fastapicontainerapp
           resourceGroup: Wim-Apps
