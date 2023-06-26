@@ -24,3 +24,5 @@ jobs:
           acrName: wimacr
           containerAppName: fastapica
           resourceGroup: Wim-Apps
+
+#test
