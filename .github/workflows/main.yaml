@@ -37,4 +37,5 @@ jobs:
         with:
           app-name: 'fastapiwebapp'
           images: wimacr.azurecr.io/fastapi_todo:${{ github.sha }}
+          app-settings: WEBSITES_PORT=8000
           action: "Run"
