@@ -26,3 +26,4 @@ jobs:
           resourceGroup: Wim-Apps
           targetPort: 8000
           location: westeurope
+#test
