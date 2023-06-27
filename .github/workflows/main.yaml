@@ -32,12 +32,26 @@ jobs:
         tags: wimacr.azurecr.io/fastapi_todo:${{ github.sha }}
         file: Dockerfile
 
-    - name: Build and deploy Container App
-      uses: azure/container-apps-deploy-action@v1
+    # - name: 'Build and Push Image to ACR'
+    #   uses: azure/docker-login@v1
+    #   with:
+    #     login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+    #     username: ${{ secrets.REGISTRY_USERNAME }}
+    #     password: ${{ secrets.REGISTRY_PASSWORD }}
+    # - run: |
+    #     docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/bookstoreapi:${{ github.sha }}
+    #     docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/bookstoreapi:${{ github.sha }}
+
+    - name: 'Deploy to Azure Container Instances'
+      uses: 'azure/aci-deploy@v1'
       with:
-        imageToDeploy: wimacr.azurecr.io/fastapi_todo:${{ github.sha }}
-        acrName: wimacr
-        containerAppName: fastapicontainerapp
-        resourceGroup: Wim-Apps
-        targetPort: 8000
-        location: westeurope
+        resource-group: Wim-Apps
+        dns-name-label: fastapiwim-todo
+        image: wimacr.azurecr.io/fastapi_todo:${{ github.sha }}
+        cpu: 1
+        memory: 1
+        registry-username: ${{ secrets.REGISTRY_USERNAME }}
+        registry-password: ${{ secrets.REGISTRY_PASSWORD }}
+        ports: 8000
+        name: fastapiwim-todo
+        location: 'westeurope'
