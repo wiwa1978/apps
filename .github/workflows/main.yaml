@@ -1,57 +1,35 @@
-name: Deploy app to Azure Container Apps 
+name: Azure Web App Deployment
+
 on:
   push:
     branches:
       - main
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
-    steps:
-    # Checkout the repository to the GitHub Actions runner
-    - name: Checkout
-      uses: actions/checkout@v3
     
-    - name: Log in to Azure
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: 'Docker Login'
-      uses: azure/docker-login@v1
-      with:
-        login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-        username: ${{ secrets.REGISTRY_USERNAME }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
- 
-    - name: Build the image and push it to ACR
-      uses: docker/build-push-action@v2
-      with:
-        push: true
-        tags: wimacr.azurecr.io/fastapi_todo:${{ github.sha }}
-        file: Dockerfile
+      - name: Log in to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
 
-    # - name: 'Build and Push Image to ACR'
-    #   uses: azure/docker-login@v1
-    #   with:
-    #     login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-    #     username: ${{ secrets.REGISTRY_USERNAME }}
-    #     password: ${{ secrets.REGISTRY_PASSWORD }}
-    # - run: |
-    #     docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/bookstoreapi:${{ github.sha }}
-    #     docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/bookstoreapi:${{ github.sha }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: wimacr.azurecr.io/fastapi_todo:${{ github.sha }}
+          file: Dockerfile
 
-    - name: 'Deploy to Azure Container Instances'
-      uses: 'azure/aci-deploy@v1'
-      with:
-        resource-group: Wim-Apps
-        dns-name-label: fastapiwim-todo
-        image: wimacr.azurecr.io/fastapi_todo:${{ github.sha }}
-        cpu: 1
-        memory: 1
-        registry-username: ${{ secrets.REGISTRY_USERNAME }}
-        registry-password: ${{ secrets.REGISTRY_PASSWORD }}
-        ports: 8000
-        name: fastapiwim-todo
-        location: 'westeurope'
+      - name: Azure Web App deployment
+        uses: Azure/webapps-deploy@v2
+        with:
+          app-name: wimwebapp
+          images: wimacr.azurecr.io/fastapi_todo:${{ github.sha }}
+          action: "Run"

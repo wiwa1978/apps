@@ -1,44 +1,35 @@
-name: Deploy to Azure Container Instances Wim
- 
+name: Deploy app to Azure Container Instance
 on:
-#  workflow_dispatch:
- push:
-  branches:
-   [ main ]
+  push:
+    branches:
+      - main
 
 jobs:
-  docker_build_push_acr:
-    name: 'Docker Build and Push to ACR'
+  build:
     runs-on: ubuntu-latest
-    environment: production
-  
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-    defaults:
-      run:
-        shell: bash
-  
+
     steps:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
-      uses: actions/checkout@v2
-  
+      uses: actions/checkout@v3
+    
+    - name: Log in to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
     - name: 'Docker Login'
       uses: azure/docker-login@v1
       with:
         login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
-    
-    - name: 'Login via Azure CLI'
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_SERVICE_PRINCIPAL }}
  
-    - name: Build the frontend image and push it to ACR
+    - name: Build the image and push it to ACR
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: wimappsacr.azurecr.io/fastapi_todo:${{ github.sha }}
+        tags: wimacr.azurecr.io/fastapi_todo:${{ github.sha }}
         file: Dockerfile
 
     # - name: 'Build and Push Image to ACR'
@@ -56,11 +47,11 @@ jobs:
       with:
         resource-group: Wim-Apps
         dns-name-label: fastapiwim-todo
-        image: wimappsacr.azurecr.io/fastapi_todo:${{ github.sha }}
+        image: wimacr.azurecr.io/fastapi_todo:${{ github.sha }}
         cpu: 1
         memory: 1
         registry-username: ${{ secrets.REGISTRY_USERNAME }}
         registry-password: ${{ secrets.REGISTRY_PASSWORD }}
         ports: 8000
         name: fastapiwim-todo
-        location: 'West Europe'
+        location: 'westeurope'
