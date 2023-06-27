@@ -35,6 +35,6 @@ jobs:
       - name: Azure Web App deployment
         uses: Azure/webapps-deploy@v2
         with:
-          app-name: wimwebapp
+          app-name: 'fastapiwebapp'
           images: wimacr.azurecr.io/fastapi_todo:${{ github.sha }}
           action: "Run"
