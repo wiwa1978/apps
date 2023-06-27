@@ -35,7 +35,7 @@ jobs:
       - name: Azure Web App deployment
         uses: Azure/webapps-deploy@v2
         with:
-          app-name: 'fastapiwebapp'
+          app-name: fastapiwebapp
           images: wimacr.azurecr.io/fastapi_todo:${{ github.sha }}
           app-settings: WEBSITES_PORT=8000
           action: "Run"
